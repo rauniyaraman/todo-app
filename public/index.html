@@ -24,7 +24,10 @@
         const div = document.createElement('div');
         div.className = 'todo-item';
         div.innerHTML = `
-          <input type="text" value="${todo.text}" id="todo-text-${todo._id}" onchange="updateTodoText('${todo._id}', this.value)">
+          <span id="todo-text-${todo._id}">${todo.text}</span>
+          <input type="text" value="${todo.text}" id="edit-input-${todo._id}" class="edit-input" style="display: none;">
+          <button onclick="editTodo('${todo._id}')">Edit</button>
+          <button onclick="updateTodo('${todo._id}')" id="update-btn-${todo._id}" style="display: none;">Update</button>
           <button onclick="deleteTodo('${todo._id}')">Delete</button>
         `;
         todoList.appendChild(div);
@@ -48,7 +51,14 @@
       fetchTodos();
     }
 
-    async function updateTodoText(id, text) {
+    function editTodo(id) {
+      document.getElementById(`todo-text-${id}`).style.display = 'none';
+      document.getElementById(`edit-input-${id}`).style.display = 'inline';
+      document.getElementById(`update-btn-${id}`).style.display = 'inline';
+    }
+
+    async function updateTodo(id) {
+      const text = document.getElementById(`edit-input-${id}`).value;
       await fetch(`http://localhost:3000/todos/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
