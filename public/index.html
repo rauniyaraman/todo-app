@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Todo App</title>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    #todo-form { margin-bottom: 20px; }
-    .todo-item { display: flex; justify-content: space-between; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Todo App</h1>
@@ -16,7 +12,6 @@
     <input type="text" id="new-todo" placeholder="Enter new todo">
     <button onclick="addTodo()">Add Todo</button>
   </div>
-  
   <div id="todo-list"></div>
 
   <script>
@@ -28,8 +23,10 @@
       todos.forEach(todo => {
         const div = document.createElement('div');
         div.className = 'todo-item';
-        div.innerHTML = `<span>${todo.text}</span>
-                         <button onclick="deleteTodo('${todo._id}')">Delete</button>`;
+        div.innerHTML = `
+          <input type="text" value="${todo.text}" id="todo-text-${todo._id}" onchange="updateTodoText('${todo._id}', this.value)">
+          <button onclick="deleteTodo('${todo._id}')">Delete</button>
+        `;
         todoList.appendChild(div);
       });
     }
@@ -48,6 +45,15 @@
 
     async function deleteTodo(id) {
       await fetch(`http://localhost:3000/todos/${id}`, { method: 'DELETE' });
+      fetchTodos();
+    }
+
+    async function updateTodoText(id, text) {
+      await fetch(`http://localhost:3000/todos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
       fetchTodos();
     }
 

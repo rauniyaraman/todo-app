@@ -38,6 +38,12 @@ app.post('/todos', async (req, res) => {
   res.send(todo);
 });
 
+app.put('/todos/:id', async (req, res) => {
+  const { text, completed } = req.body;
+  const todo = await Todo.findByIdAndUpdate(req.params.id, { text, completed }, { new: true });
+  res.send(todo);
+});
+
 app.delete('/todos/:id', async (req, res) => {
   await Todo.findByIdAndDelete(req.params.id);
   res.send({ message: 'Todo deleted' });
